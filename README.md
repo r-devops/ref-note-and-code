@@ -5,6 +5,7 @@
 ```groovy
 
     stage('Code Checkout') {
+      
       sh 'find . | grep "^./" |xargs rm -rf'
 
       if (env.TAG_NAME ==~ ".*") {
@@ -12,7 +13,19 @@
       } else {
         env.gitbrname = "${env.BRANCH_NAME}"
       }
-      checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: "https://github.com/raghudevopsb79/${env.appName}"]], branches: [[name: gitbrname]]], poll: false
+      checkout poll: false, scm: [
+          $class: 'GitSCM', 
+          userRemoteConfigs: [
+              [
+                  url: "https://github.com/raghudevopsb80/${env.appName}"
+              ]
+          ], 
+          branches: [
+              [
+                  name: gitbrname
+              ]
+          ]
+      ]
 
     }
 
