@@ -104,3 +104,9 @@ resource "helm_release" "argocd" {
 ```
 Ref link: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html
 
+###  Ansible Certification
+
+https://entersoftlabs.com/certification/red-hat-ansible-automation-ex407-certification-in-hyderabad
+
+
+
