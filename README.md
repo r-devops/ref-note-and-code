@@ -281,7 +281,10 @@ kubectl patch svc argocd-server -p '{"spec": {"ports": [{"port": 443,"targetPort
 kubectl get secrets argocd-initial-admin-secret -n argocd --template={{.data.password}} | base64 --decode
 ```
 
-
+### AZ Terraform 
+```bash 
+az ad sp create-for-rbac -n terraform --role Contributor --scopes /subscriptions/7b6c642c-6e46-418f-b715-e01b2f871413
+```
 
 
 
