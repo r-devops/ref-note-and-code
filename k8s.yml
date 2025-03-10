@@ -22,20 +22,57 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mypod-with-emptydir
+  name: pod-demo-for-storage
 spec:
   containers:
-    - name: my-container
-      image: busybox
-      command: ["sleep", "3600"]
+    - name: debug
+      image: rkalluru/learnk8s:rhel9-bare
       volumeMounts:
-        - mountPath: /mnt/emptydir
-          name: emptydir-volume
+        - mountPath: /mnt/html
+          name: html-volume
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: html-volume
   volumes:
-    - name: emptydir-volume
+    - name: html-volume
       emptyDir: {}
 
 
+# kubectl exec -it -c debug nginx -- bash
+# kubectl exec -it -c nginx nginx -- bash
+
+# network in pods
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo-for-network
+spec:
+  containers:
+    - name: debug
+      image: rkalluru/learnk8s:rhel9-bare
+    - name: nginx
+      image: nginx
+
+# Init containers
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo-for-storage
+spec:
+  initContainers:
+    - name: html-generator
+      image:
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: html-volume
+  volumes:
+    - name: html-volume
+      emptyDir: {}
 
 
 
