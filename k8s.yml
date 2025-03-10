@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+
+---
+#kubectl get pod nginx -o yaml
+
+# You cannot change the namespace, name, uid, or creationTimestamp fields; the generation
+# You can add spec.containers[*].image, spec.initContainers[*].image, spec.activeDeadlineSeconds or spec.toleration
+---
+
+
+# Go inside a container
+# kubectl exec -it nginx -- bash
+
+# Storage in pods
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod-with-emptydir
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - mountPath: /mnt/emptydir
+          name: emptydir-volume
+  volumes:
+    - name: emptydir-volume
+      emptyDir: {}
+
+
+
+
+
+
