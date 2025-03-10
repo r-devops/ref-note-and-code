@@ -59,11 +59,14 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pod-demo-for-storage
+  name: pod-demo-for-init-container
 spec:
   initContainers:
     - name: html-generator
-      image:
+      image: rkalluru/learnk8s:init-container-html-generator
+      volumeMounts:
+        - mountPath: /mnt/html
+          name: html-volume
   containers:
     - name: nginx
       image: nginx
@@ -74,6 +77,7 @@ spec:
     - name: html-volume
       emptyDir: {}
 
+# sidecar containers
 
 
 
