@@ -10,6 +10,10 @@ spec:
 ---
 #kubectl get pod nginx -o yaml
 
+# kubectl describe
+
+
+
 # You cannot change the namespace, name, uid, or creationTimestamp fields; the generation
 # You can add spec.containers[*].image, spec.initContainers[*].image, spec.activeDeadlineSeconds or spec.toleration
 ---
@@ -78,6 +82,127 @@ spec:
       emptyDir: {}
 
 # sidecar containers
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-demo-for-side-car-container
+spec:
+  containers:
+    - name: html-generator
+      image: rkalluru/learnk8s:side-car-html-generator
+      volumeMounts:
+        - mountPath: /mnt/html
+          name: html-volume
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: html-volume
+  volumes:
+    - name: html-volume
+      emptyDir: {}
+
+# Labels
+apiVersion: v1
+kind: Pod
+metadata:
+  name: p1
+  labels:
+    project: example
+    application: c1
+spec:
+  containers:
+    - name: c1
+      image: rkalluru/learnk8s:rhel9-bare
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: p2
+  labels:
+    project: example
+    application: c2
+spec:
+  containers:
+    - name: c2
+      image: rkalluru/learnk8s:rhel9-bare
+
+# kubectl get pods --show-labels
+#kubectl get pods -l project=example
+#kubectl get pods -l application=c2
+
+
+
+# Annotations
+
+
+
+
+# Replica set
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-demo
+  labels:
+    project: example
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+
+# kubectl get rs
+# kubectl describe rs/rs-demo
+# kubectl get pods frontend-gbgfx -o yaml
+
+#   ownerReferences:            This is what we see
+#   - apiVersion: apps/v1
+#     blockOwnerDeletion: true
+#     controller: true
+#     kind: ReplicaSet
+#     name: frontend
+#     uid: e129deca-f864-481b-bb16-b27abfd92292
+
+# Non-Template Pod acquisitions
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: p3
+  labels:
+    project: example
+    application: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+
+## Isolating Pods from a ReplicaSet
+# kubectl patch pod <pod-name> -p '{"metadata":{"ownerReferences":[]}}'
+
+
+
+# scaling a replica set
+# kubectl scale replicaset <replicaset-name> --replicas=10
+# kubectl scale replicaset <replicaset-name> --replicas=1
+
+# Pod deletion cost  -> To determine which pods to remove first
+# kubectl patch pod <pod-name-1> -p '{"metadata":{"annotations":{"controller.kubernetes.io/pod-deletion-cost":"100"}}}'
+# -2147483648, 2147483647], Higher the number - Higher the priority
+
+# Example Use Case
+#  The different pods of an application could have different utilization levels. On scale down, the application may prefer to remove the pods with lower utilization. To avoid frequently updating the pods, the application should update controller.kubernetes.io/pod-deletion-cost once before issuing a scale down (setting the annotation to a value proportional to pod utilization level). This works if the application itself controls the down scaling; for example, the driver pod of a Spark deployment.
+
 
 
 
