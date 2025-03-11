@@ -189,7 +189,7 @@ spec:
 
 ## Isolating Pods from a ReplicaSet
 # kubectl patch pod <pod-name> -p '{"metadata":{"ownerReferences":[]}}'
-
+ kubectl patch pod rs-demo-x76jf -p '{"metadata": {"labels": {"app": "demo"}}}'
 
 
 # scaling a replica set
