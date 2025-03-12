@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: frontend
+  template:
+    metadata:
+      labels:
+        component: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: public.ecr.aws/w8x4g9h7/roboshop-v3/frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: catalogue
+  template:
+    metadata:
+      labels:
+        component: catalogue
+    spec:
+      containers:
+      - name: catalogue
+        image: public.ecr.aws/w8x4g9h7/roboshop-v3/catalogue
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: cart
+  template:
+    metadata:
+      labels:
+        component: cart
+    spec:
+      containers:
+      - name: cart
+        image: public.ecr.aws/w8x4g9h7/roboshop-v3/cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: shipping
+  template:
+    metadata:
+      labels:
+        component: shipping
+    spec:
+      containers:
+      - name: shipping
+        image: public.ecr.aws/w8x4g9h7/roboshop-v3/shipping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: payment
+  template:
+    metadata:
+      labels:
+        component: payment
+    spec:
+      containers:
+      - name: payment
+        image: public.ecr.aws/w8x4g9h7/roboshop-v3/payment
+---
+
+
+
+

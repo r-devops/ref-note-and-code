@@ -189,7 +189,7 @@ spec:
 
 ## Isolating Pods from a ReplicaSet
 # kubectl patch pod <pod-name> -p '{"metadata":{"ownerReferences":[]}}'
- kubectl patch pod rs-demo-x76jf -p '{"metadata": {"labels": {"app": "demo"}}}'
+# kubectl patch pod rs-demo-x76jf -p '{"metadata": {"labels": {"app": "demo"}}}'
 
 
 # scaling a replica set
@@ -202,6 +202,165 @@ spec:
 
 # Example Use Case
 #  The different pods of an application could have different utilization levels. On scale down, the application may prefer to remove the pods with lower utilization. To avoid frequently updating the pods, the application should update controller.kubernetes.io/pod-deletion-cost once before issuing a scale down (setting the annotation to a value proportional to pod utilization level). This works if the application itself controls the down scaling; for example, the driver pod of a Spark deployment.
+
+
+# kubectl patch pod <pod-name> -p '{"metadata": {"annotations": {"controller.kubernetes.io/pod-deletion-cost": "10"}}}'
+
+
+# Explain Replication Controller
+
+# What are the limitations of replicaset
+
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rs-demo
+  labels:
+    project: example
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+
+#kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1
+# kubectl rollout status deployment/nginx-deployment
+
+# kubectl get rs
+# kubectl describe deployments
+
+# Deployment Controller
+
+# Dont do Label selector updates
+
+# kubectl set image deployment/nginx-deployment nginx=nginx:1.161
+# kubectl rollout status deployment/nginx-deployment
+
+# kubectl rollout history deployment/nginx-deployment
+
+# Rolling back to previous version
+
+# kubectl rollout undo deployment/nginx-deployment
+
+
+# Scale deployment
+# kubectl scale deployment/nginx-deployment --replicas=10
+
+# Rolling Update strategy
+
+# Pods re-create with new config few after few and replaces everything, The default behviour of those values comes from
+#
+# maxSurge=3, and maxUnavailable=2
+#
+# Lets see these values from the existing deployment.
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  replicas: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3            # Maximum number of pods that can be created above the desired number of pods during an update
+      maxUnavailable: 2       # Maximum number of pods that can be unavailable during the update
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app-image
+
+# kubectl set image deployment/nginx-deployment nginx=nginx:1.16.1
+# kubectl rollout pause deployment/nginx-deployment
+# kubectl rollout history deployment/nginx-deployment
+
+
+
+# Pausing and Resuming a rollout of a Deployment
+You can pause , Make some updates and then resume the rollout
+
+# kubectl set image deployment/nginx-deployment nginx=nginx:1.17
+kubectl rollout resume deployment/nginx-deployment
+
+kubectl get rs --watch
+
+
+### Deployment status
+
+## Deployment History - Clean up Policy
+
+.spec.revisionHistoryLimit to 0, a
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  replicas: 3
+  revisionHistoryLimit: 0  # This will retain no old revisions of the Deployment
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app-image
+
+## Strategy
+.spec.strategy specifies the strategy used to replace old Pods by new ones. .spec.strategy.type can be "Recreate" or "RollingUpdate". "RollingUpdate" is the default value.
+
+Recreate - Delete pod and create
+Rolling Update - Create pod and delete
+
+#########################################################################################################################
+It is inevitable and understand that to run a application then we need to go with Deployments.
+1. To maintain replicas
+2. To rotate pods when there is an image change
+
+So lets make the project Running with the deployments.deployment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
