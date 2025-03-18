@@ -353,8 +353,43 @@ So lets make the project Running with the deployments.deployment
 
 
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+spec:
+  replicas: 6  # Multiple pods to be created
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          minDomains: 2
+          topologyKey: "failure-domain.kubernetes.io/zone"
+          whenUnsatisfiable: "DoNotSchedule"
+      containers:
+        - name: example-container
+          image: nginx
 
 
+Replicas: With 6 replicas in this Deployment, Kubernetes will try to spread these replicas across different zones to meet the constraints.
+topologySpreadConstraints:
+maxSkew: Ensures that the difference in the number of pods between any two zones is no greater than 1.
+minDomains: Specifies that at least 2 zones should be used to distribute the pods.
+topologyKey: The pods are spread across zones as indicated by the key failure-domain.kubernetes.io/zone.
+
+
+
+labelSelector:
+  matchLabels:
+    app: web
+
+labelSelector: Only nodes with the label app: web will be considered for spreading the pods.
 
 
 
